@@ -8,7 +8,8 @@ public class GameManager : MonoBehaviour
     #region Variables
     [Header("Prefabs")]                                             //Prefab GameObjects
     public GameObject hangarPrefab;
-    public GameObject planePrefab;
+    public List<GameObject> planePrefabs = new List<GameObject>();
+    //public GameObject planePrefab;
 
     [Header("Scene Components")]                                    //Scene Component GameObjects
     public GameObject directionalLight;
@@ -81,12 +82,10 @@ public class GameManager : MonoBehaviour
         {
             GameObject hangar = Instantiate(hangarPrefab, hangarPosition, transform.rotation, hangarParent);
             Vector3 planePosition = hangarPosition - new Vector3(0, 0, 2);
-            GameObject plane = Instantiate(planePrefab, planePosition, transform.rotation, planeParent);
-            plane.GetComponent<AirplaneFunc>().planeType = planeTypes[Random.Range(0, planeTypes.Count)];
+            InstantiateRandomPlane(planePosition);
             hangarPosition += new Vector3(2.5f, 0, 0);
 
             hangars.Add(hangar);
-            planes.Add(plane);
         }
 
         SetNumberForTags("Hangar");
@@ -94,6 +93,20 @@ public class GameManager : MonoBehaviour
 
         startScreen.SetActive(false);
         gameStarted = true;
+    }
+
+    private void InstantiateRandomPlane(Vector3 position)
+    {
+        GameObject planeType = planePrefabs[Random.Range(0, planePrefabs.Count)];
+
+        GameObject plane = Instantiate(planeType, position, transform.rotation, planeParent);
+
+        AirplaneFunc planeFunc = plane.GetComponent<AirplaneFunc>();
+        
+        if (planeType == planePrefabs[0]) planeFunc.planeType = planeTypes[Random.Range(0, planeTypes.Count - 1)];
+        else if (planeType == planePrefabs[1]) planeFunc.planeType = planeTypes[2];
+
+        planes.Add(plane);
     }
 
     /// <summary>
