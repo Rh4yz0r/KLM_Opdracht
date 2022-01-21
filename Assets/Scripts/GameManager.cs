@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     private List<GameObject> planes = new List<GameObject>();
     private List<GameObject> hangars = new List<GameObject>();
 
+    public List<Airplane> planeTypes = new List<Airplane>();
+
     private bool gameStarted;
 
     void Start()
@@ -49,13 +51,14 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        Vector3 hangarPosition = new Vector3(-8.5f, 0, 4);
+        Vector3 hangarPosition = new Vector3(-8.75f, 0, 4);
 
         for (int i = 0; i < planeAmount; i++)
         {
             GameObject hangar = Instantiate(hangarPrefab, hangarPosition, transform.rotation);
             Vector3 planePosition = hangarPosition - new Vector3(0, 0, 2);
             GameObject plane = Instantiate(planePrefab, planePosition, transform.rotation);
+            plane.GetComponent<AirplaneFunc>().planeType = planeTypes[Random.Range(0, planeTypes.Count)];
             hangarPosition += new Vector3(2.5f, 0, 0);
 
             hangars.Add(hangar);

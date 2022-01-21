@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Plane", menuName = "Plane")]
+[CreateAssetMenu(fileName = "New Airplane", menuName = "Airplane")]
 public class Airplane : ScriptableObject
 {
 

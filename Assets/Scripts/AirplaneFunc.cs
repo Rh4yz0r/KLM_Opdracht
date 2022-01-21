@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class AirplaneFunc : MonoBehaviour
 {
-    public Airplane plane;
+    public Airplane planeType;
 
     public NavMeshAgent agent;
 

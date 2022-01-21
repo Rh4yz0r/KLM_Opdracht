@@ -1073,6 +1073,10 @@ MonoBehaviour:
   planeAmountText: {fileID: 1432764942}
   parkedText: {fileID: 757657130}
   planeAmount: 3
+  planeTypes:
+  - {fileID: 11400000, guid: 69b2874317111694f9a5d920e1c42a82, type: 2}
+  - {fileID: 11400000, guid: 0177df35457f48f4ca010600b03ffa42, type: 2}
+  - {fileID: 11400000, guid: dba5bc4c4ad81264ca431eb059923af2, type: 2}
 --- !u!4 &378459154
 Transform:
   m_ObjectHideFlags: 0
