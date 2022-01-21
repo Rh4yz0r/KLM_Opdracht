@@ -13,6 +13,11 @@ public class GameManager : MonoBehaviour
 
     public int planeAmount = 3;
 
+    private List<GameObject> planes = new List<GameObject>();
+    private List<GameObject> hangars = new List<GameObject>();
+
+    private bool gameStarted;
+
     void Start()
     {
         SetPlaneAmount(planeAmount);
@@ -20,7 +25,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        CheckPlanesParked();
+        if (gameStarted && CheckPlanesParked()) parkedText.SetActive(true);
     }
 
     private void SetNumberForTags(string tag)
@@ -48,32 +53,36 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < planeAmount; i++)
         {
-            Instantiate(hangarPrefab, hangarPosition, transform.rotation);
+            GameObject hangar = Instantiate(hangarPrefab, hangarPosition, transform.rotation);
             Vector3 planePosition = hangarPosition - new Vector3(0, 0, 2);
-            Instantiate(planePrefab, planePosition, transform.rotation);
+            GameObject plane = Instantiate(planePrefab, planePosition, transform.rotation);
             hangarPosition += new Vector3(2.5f, 0, 0);
+
+            hangars.Add(hangar);
+            planes.Add(plane);
         }
 
         SetNumberForTags("Hangar");
         SetNumberForTags("Airplane");
 
         startScreen.SetActive(false);
+        gameStarted = true;
     }
 
-    private void CheckPlanesParked()
+    private bool CheckPlanesParked()
     {
-        foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
+        foreach (GameObject plane in planes)
         {
-            if (!plane.GetComponent<AirplaneFunc>().parked) break;
-            parkedText.SetActive(true);
+            if (!plane.GetComponent<AirplaneFunc>().parked) return false;
         }
+        return true;
     }
 
     public void ParkPlanes()
     {
-        foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
+        foreach (GameObject plane in planes)
         {
-            foreach (GameObject hangar in GameObject.FindGameObjectsWithTag("Hangar"))
+            foreach (GameObject hangar in hangars)
             {
                 TextMeshPro TMPPlane = plane.GetComponentInChildren<TextMeshPro>();
                 TextMeshPro TMPHangar = hangar.GetComponentInChildren<TextMeshPro>();
@@ -99,7 +108,7 @@ public class GameManager : MonoBehaviour
     {
         directionalLight.SetActive(!directionalLight.activeInHierarchy);
 
-        foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
+        foreach (GameObject plane in planes)
         {
             AirplaneFunc func = plane.GetComponent<AirplaneFunc>();
             func.lights.SetActive(!func.lights.activeInHierarchy);
