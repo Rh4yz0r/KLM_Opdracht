@@ -5,17 +5,29 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject startButton, startScreen, directionalLight;
+    [Header("Prefabs")]                             //Prefab GameObjects
+    public GameObject hangarPrefab;
+    public GameObject planePrefab;
 
-    public GameObject hangarPrefab, planePrefab;
+    [Header("Scene Components")]                    //Scene Component GameObjects
+    public GameObject directionalLight;
 
-    public GameObject planeAmountText, parkedText;
+    [Header("User Interface Components")]           //User Interface GameObjects
+    public GameObject startButton;
+    public GameObject startScreen;
+    public GameObject planeAmountText;
+    public GameObject parkedText;
 
-    public int planeAmount = 3;
+    [Header("Parent Components")]                   //Instantiated GameObject Parents
+    public Transform hangarParent;
+    public Transform planeParent;
+
+    private int planeAmount = 3;
 
     private List<GameObject> planes = new List<GameObject>();
     private List<GameObject> hangars = new List<GameObject>();
 
+    [Header("Airplane Scriptable Objects")]
     public List<Airplane> planeTypes = new List<Airplane>();
 
     private bool gameStarted;
@@ -55,9 +67,9 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < planeAmount; i++)
         {
-            GameObject hangar = Instantiate(hangarPrefab, hangarPosition, transform.rotation);
+            GameObject hangar = Instantiate(hangarPrefab, hangarPosition, transform.rotation, hangarParent);
             Vector3 planePosition = hangarPosition - new Vector3(0, 0, 2);
-            GameObject plane = Instantiate(planePrefab, planePosition, transform.rotation);
+            GameObject plane = Instantiate(planePrefab, planePosition, transform.rotation, planeParent);
             plane.GetComponent<AirplaneFunc>().planeType = planeTypes[Random.Range(0, planeTypes.Count)];
             hangarPosition += new Vector3(2.5f, 0, 0);
 
