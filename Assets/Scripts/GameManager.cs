@@ -5,22 +5,22 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public GameObject startButton, startScreen, directionalLight;
 
-    public bool startParking;
+    public GameObject hangarPrefab, planePrefab;
+
+    public GameObject planeAmountText, parkedText;
+
+    public int planeAmount = 3;
 
     void Start()
     {
-        SetNumberForTags("Hangar");
-        SetNumberForTags("Airplane");
+        SetPlaneAmount(planeAmount);
     }
 
     void Update()
     {
-        if (startParking)
-        {
-            ParkPlanes();
-            startParking = false;
-        }
+        CheckPlanesParked();
     }
 
     private void SetNumberForTags(string tag)
@@ -35,7 +35,41 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ParkPlanes()
+    public void SetPlaneAmount(float amount)
+    {
+        planeAmount = (int)amount;
+        planeAmountText.GetComponent<TextMeshProUGUI>().text = planeAmount.ToString();
+    }
+
+
+    public void StartGame()
+    {
+        Vector3 hangarPosition = new Vector3(-8.5f, 0, 4);
+
+        for (int i = 0; i < planeAmount; i++)
+        {
+            Instantiate(hangarPrefab, hangarPosition, transform.rotation);
+            Vector3 planePosition = hangarPosition - new Vector3(0, 0, 2);
+            Instantiate(planePrefab, planePosition, transform.rotation);
+            hangarPosition += new Vector3(2.5f, 0, 0);
+        }
+
+        SetNumberForTags("Hangar");
+        SetNumberForTags("Airplane");
+
+        startScreen.SetActive(false);
+    }
+
+    private void CheckPlanesParked()
+    {
+        foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
+        {
+            if (!plane.GetComponent<AirplaneFunc>().parked) break;
+            parkedText.SetActive(true);
+        }
+    }
+
+    public void ParkPlanes()
     {
         foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
         {
@@ -51,20 +85,23 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartParking(GameObject plane, GameObject hangar)
     {
-        Vector3 StartParkingPosition = hangar.transform.position + new Vector3(0, 0, 2);
+        Vector3 StartParkingPosition = hangar.transform.position - new Vector3(0, 0, 2);
         AirplaneFunc planeFunc = plane.GetComponent<AirplaneFunc>();
 
         planeFunc.GoToPoint(StartParkingPosition);
         yield return new WaitUntil(() => Vector3.Distance(plane.transform.position, StartParkingPosition) <= planeFunc.stopDistance);
         planeFunc.GoToPoint(hangar.transform.position);
+        yield return new WaitUntil(() => Vector3.Distance(plane.transform.position, hangar.transform.position) <= planeFunc.stopDistance);
+        planeFunc.parked = true;
     }
 
     public void SwitchLights()
     {
+        directionalLight.SetActive(!directionalLight.activeInHierarchy);
+
         foreach (GameObject plane in GameObject.FindGameObjectsWithTag("Airplane"))
         {
             AirplaneFunc func = plane.GetComponent<AirplaneFunc>();
-
             func.lights.SetActive(!func.lights.activeInHierarchy);
         }
     }

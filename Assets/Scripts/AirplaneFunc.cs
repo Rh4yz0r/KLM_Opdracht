@@ -19,6 +19,9 @@ public class AirplaneFunc : MonoBehaviour
 
     private bool roaming = true;
 
+    [HideInInspector]
+    public bool parked;
+
     void Start()
     {
         SetTarget(length, width);
